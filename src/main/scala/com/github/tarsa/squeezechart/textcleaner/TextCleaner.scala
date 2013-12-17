@@ -21,15 +21,11 @@ object TextCleaner {
         Files.newDirectoryStream(dir, "*.txt").toList
     }.map(path => (path.getFileName.toString, path)).toMap
 
-    val nameToContents = nameToPath.map {
-      case (name: String, path: Path) =>
-        (name, Files.readAllLines(path, Charset.forName("ISO-8859-1")))
-    }.asInstanceOf[Map[String, java.util.List[String]]]
-
     val marks = List("project gutenberg", "etext", "etexts", "ebook", "ebooks",
       "small print").toArray
 
-    for ((name, content) <- nameToContents) {
+    for ((name, path) <- nameToPath) {
+      val content = Files.readAllLines(path, Charset.forName("ISO-8859-1"))
       val markedLines = ArrayBuffer[Int]()
       for ((line, number) <- content.zipWithIndex) {
         val lineLow = line.toLowerCase
